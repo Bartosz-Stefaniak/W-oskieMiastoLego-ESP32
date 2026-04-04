@@ -2,22 +2,38 @@
 #define FOTOREZYSTOR_H
 // fotorezystor.h
 #include "Konfiguracja.h"
-unsigned long lastPhotoresistorCheckTime = 0;
+const int LDR_THRESHOLD_DARK  = 3100; // poniżej → ciemno
+const int LDR_THRESHOLD_LIGHT = 3600; // powyżej → jasno (wyższy próg uwzględnia świecące diody)
 
-bool checkSensor() {
-  return analogRead(LDR_PIN) < 3100;
+unsigned long lastPhotoresistorCheckTime = 0;
+bool currentDarkState = false;
+
+int realLDR() {
+  return analogRead(LDR_PIN);
 }
 
+// Zwraca true jeśli ciemność potwierdzona przez LDR_CHECK_DELAY ms
 bool isDark() {
-  if (!checkSensor()) {
-    lastPhotoresistorCheckTime = millis();
-    return false; // Jest jasno
+  int val = realLDR();
+
+  if (currentDarkState) {
+    // Aktualnie ciemno — gaś tylko jeśli przekroczono WYŻSZY próg (jasno)
+    if (val > LDR_THRESHOLD_LIGHT) {
+      lastPhotoresistorCheckTime = millis();
+      currentDarkState = false;
+    }
   } else {
-    // Jeśli jest ciemno, sprawdź czy minął czas stabilizacji (2 sekundy)
-    if ((millis() - lastPhotoresistorCheckTime) > LDR_CHECK_DELAY) {
-      return true; // Potwierdzono: jest ciemno
+    // Aktualnie jasno — zapal tylko jeśli przekroczono NIŻSZY próg (ciemno)
+    if (val < LDR_THRESHOLD_DARK) {
+      if ((millis() - lastPhotoresistorCheckTime) > LDR_CHECK_DELAY) {
+        currentDarkState = true;
+      }
+    } else {
+      lastPhotoresistorCheckTime = millis(); // resetuj timer gdy nie jest ciemno
     }
   }
-  return false; // Jeszcze czekamy na potwierdzenie (CHECK_DELAY)
+
+  return currentDarkState;
 }
+
 #endif
