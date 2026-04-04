@@ -20,8 +20,6 @@ void loop() {
     digitalWrite(BUILTIN_LED, systemActive ? HIGH : LOW);
     resetSekcji(); // zawsze resetuj przy każdej zmianie stanu
 }
-    }
-  }
 
   // --- URUCHOMIENIE PROGRAMU PO SPRAWDZENIU WARUNKU ---
   if (systemActive) {
@@ -32,7 +30,7 @@ void loop() {
     Serial.print(" | section1Active: ");
     Serial.println(section1Active);
     Serial.print(" | firstRun: ");
-Serial.print(firstRun);
+Serial.print(firstRunDark);
 Serial.print(" | timeDiff: ");
 Serial.println(millis() - lastSectionTime);
     initializeLEDs();
