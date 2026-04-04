@@ -2,8 +2,8 @@
 #define FOTOREZYSTOR_H
 // fotorezystor.h
 #include "Konfiguracja.h"
-const int LDR_THRESHOLD_DARK  = 3100; // poniżej → ciemno
-const int LDR_THRESHOLD_LIGHT = 3600; // powyżej → jasno (wyższy próg uwzględnia świecące diody)
+const int LDR_THRESHOLD_DARK  = 2700; // poniżej → ciemno
+const int LDR_THRESHOLD_LIGHT = 3000; // powyżej → jasno (wyższy próg uwzględnia świecące diody)
 
 unsigned long lastPhotoresistorCheckTime = 0;
 bool currentDarkState = false;
