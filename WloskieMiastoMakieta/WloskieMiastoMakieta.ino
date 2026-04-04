@@ -18,10 +18,8 @@ void loop() {
   if (isSystemClicked()) {
     systemActive = !systemActive;
     digitalWrite(BUILTIN_LED, systemActive ? HIGH : LOW);
-    if(!systemActive){
-      digitalWrite(LED_SECTION_1, LOW);
-      section1Active = false;
-      firstRun = true;
+    resetSekcji(); // zawsze resetuj przy każdej zmianie stanu
+}
     }
   }
 
