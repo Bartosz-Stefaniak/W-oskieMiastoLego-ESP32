@@ -3,7 +3,7 @@
 #include "Konfiguracja.h"
 #include "Fotorezystor.h"
 
-const unsigned long SECTION_INTERVAL = 300000; // 5 minut
+const unsigned long SECTION_INTERVAL = 30000; // 5 minut
 unsigned long lastSectionTime = 0;
 bool section1Active = false;
 bool firstRunDark = true;

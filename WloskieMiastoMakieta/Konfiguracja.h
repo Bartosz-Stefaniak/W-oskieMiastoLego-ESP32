@@ -4,6 +4,11 @@
 
 // --- PINY DLA LED (MOSFET) ---
 const int LED_SECTION_STREETLIGHTS = 13;
+const int LED_SECTION_TERRACESPWM = 18;
+const int LED_SECTION_AMBIENTBUILDINGS = 12;
+const int LED_SECTION_1 = 32;
+const int LED_SECTION_2 = 33;
+const int LED_SECTION_3 = 4;
 // ... dodaj kolejne do 10 sekcji
 
 // --- WBUDOWANA DIODA ---
