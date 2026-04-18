@@ -3,7 +3,7 @@
 #define KONFIGURACJA_H
 
 // --- PINY DLA LED (MOSFET) ---
-const int LED_SECTION_1 = 13;
+const int LED_SECTION_STREETLIGHTS = 13;
 // ... dodaj kolejne do 10 sekcji
 
 // --- WBUDOWANA DIODA ---

@@ -8,8 +8,8 @@ void setup() {
   Serial.begin(115200);
   pinMode(BUILTIN_LED, OUTPUT);
   digitalWrite(BUILTIN_LED, LOW);
-  pinMode(LED_SECTION_1, OUTPUT);
-  digitalWrite(LED_SECTION_1, LOW);
+  pinMode(LED_SECTION_STREETLIGHTS, OUTPUT);
+  digitalWrite(LED_SECTION_STREETLIGHTS, LOW);
   pinMode(BUTTON_SYSTEM_PIN, INPUT);
 }
 
@@ -26,7 +26,7 @@ void loop() {
     Serial.print("LDR: ");
     Serial.print(realLDR());
     Serial.print(" | isDark: ");
-    Serial.print(isDark());
+    Serial.print(currentDarkState);
     Serial.print(" | section1Active: ");
     Serial.println(section1Active);
     Serial.print(" | firstRun: ");

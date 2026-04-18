@@ -14,7 +14,7 @@ void resetSekcji() {
   firstRunDark = true;
   firstRunLight = true;
   lastSectionTime = 0;
-  digitalWrite(LED_SECTION_1, LOW);
+  digitalWrite(LED_SECTION_STREETLIGHTS, LOW);
 }
 
 void initializeLEDs() {
@@ -26,7 +26,7 @@ void initializeLEDs() {
       firstRunDark = false;
       firstRunLight = true; // reset gaszenia
       section1Active = true;
-      digitalWrite(LED_SECTION_1, HIGH);
+      digitalWrite(LED_SECTION_STREETLIGHTS, HIGH);
       lastSectionTime = now;
       Serial.println("Sekcja 1 WLACZONA");
     }
@@ -37,7 +37,7 @@ void initializeLEDs() {
       firstRunLight = false;
       firstRunDark = true; // reset zapalania
       section1Active = false;
-      digitalWrite(LED_SECTION_1, LOW);
+      digitalWrite(LED_SECTION_STREETLIGHTS, LOW);
       lastSectionTime = now;
       Serial.println("Sekcja 1 WYLACZONA");
     }

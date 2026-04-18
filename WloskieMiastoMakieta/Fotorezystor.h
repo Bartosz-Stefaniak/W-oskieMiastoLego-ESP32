@@ -27,6 +27,7 @@ bool isDark() {
     if (val < LDR_THRESHOLD_DARK) {
       if ((millis() - lastPhotoresistorCheckTime) > LDR_CHECK_DELAY) {
         currentDarkState = true;
+        lastPhotoresistorCheckTime = millis();
       }
     } else {
       lastPhotoresistorCheckTime = millis(); // resetuj timer gdy nie jest ciemno
