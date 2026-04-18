@@ -8,7 +8,8 @@ const unsigned long TURN_ON_INTERVAL  = 2000;  // 1 minuta między włączaniem
 const unsigned long TURN_OFF_INTERVAL = 5000;  // 30 sekund między wyłączaniem
 
 // --- STAN ---
-unsigned long lastSectionTime = 0;
+unsigned long lastOnTime = 0;
+unsigned long lastOffTime = 0;
 int activeSections = 0; // ile sekcji aktualnie włączonych (0-6)
 bool firstRunDark  = true;
 bool firstRunLight = true;
@@ -48,7 +49,8 @@ void resetSekcji() {
   activeSections = 0;
   firstRunDark   = true;
   firstRunLight  = true;
-  lastSectionTime = 0;
+  lastOnTime = 0;
+  lastOffTime =0;
 }
 
 void initializeLEDs() {
@@ -57,10 +59,10 @@ void initializeLEDs() {
 
   // --- WŁĄCZANIE sekwencyjne ---
   if (dark && activeSections < SECTION_COUNT) {
-    if (firstRunDark || (now - lastSectionTime) > TURN_ON_INTERVAL) {
+    if (firstRunDark || (now - lastOnTime) > TURN_ON_INTERVAL) {
       firstRunDark = false;
       firstRunLight = true;
-      lastSectionTime = now;
+      lastOnTime = now;
 
       int pin = onOrder[activeSections];
       if (pin != LED_SECTION_TERRACESPWM) {
@@ -79,10 +81,10 @@ void initializeLEDs() {
 
   // --- WYŁĄCZANIE sekwencyjne ---
   if (!dark && activeSections > 0) {
-    if (firstRunLight || (now - lastSectionTime) > TURN_OFF_INTERVAL) {
+    if (firstRunLight || (now - lastOffTime) > TURN_OFF_INTERVAL) {
       firstRunLight = false;
       firstRunDark = true;
-      lastSectionTime = now;
+      lastOffTime = now;
 
       activeSections--;
       int pin = offOrder[SECTION_COUNT - 1 - activeSections];
