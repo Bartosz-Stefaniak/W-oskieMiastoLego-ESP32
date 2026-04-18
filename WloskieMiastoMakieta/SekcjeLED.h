@@ -4,8 +4,8 @@
 #include "Fotorezystor.h"
 #include "SekcjaPWM.h"
 // --- INTERWAŁY ---
-const unsigned long TURN_ON_INTERVAL  = 3000;  // 1 minuta między włączaniem
-const unsigned long TURN_OFF_INTERVAL = 3000;  // 30 sekund między wyłączaniem
+const unsigned long TURN_ON_INTERVAL  = 2000;  // 1 minuta między włączaniem
+const unsigned long TURN_OFF_INTERVAL = 5000;  // 30 sekund między wyłączaniem
 
 // --- STAN ---
 unsigned long lastSectionTime = 0;
@@ -44,6 +44,7 @@ void resetSekcji() {
     }
     // PWM — logika w SekcjaPWM.h, tutaj tylko sygnał do wyłączenia
   }
+  disablePWM();
   activeSections = 0;
   firstRunDark   = true;
   firstRunLight  = true;
@@ -88,7 +89,7 @@ void initializeLEDs() {
       if (pin != LED_SECTION_TERRACESPWM) {
         digitalWrite(pin, LOW);
       }else{
-        disablePWM;
+        disablePWM();
       }
       // LED_SECTION_TERRACESPWM — SekcjaPWM.h samo to obsłuży
 
