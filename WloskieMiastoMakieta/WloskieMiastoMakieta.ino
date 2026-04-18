@@ -1,7 +1,9 @@
 #include "Konfiguracja.h"
-#include "przyciskSystem.h"
-#include "fotorezystor.h"
+#include "PrzyciskSystem.h"
+#include "Fotorezystor.h"
+#include "SekcjaPWM.h"      // ← nowe
 #include "SekcjeLED.h"
+
 bool systemActive = false;
 
 void setup() {
@@ -10,29 +12,27 @@ void setup() {
   digitalWrite(BUILTIN_LED, LOW);
   pinMode(LED_SECTION_STREETLIGHTS, OUTPUT);
   digitalWrite(LED_SECTION_STREETLIGHTS, LOW);
+  pinMode(LED_SECTION_1, OUTPUT);
+  digitalWrite(LED_SECTION_1, LOW);
+  pinMode(LED_SECTION_2, OUTPUT);
+  digitalWrite(LED_SECTION_2, LOW);
+  pinMode(LED_SECTION_3, OUTPUT);
+  digitalWrite(LED_SECTION_3, LOW);
+  pinMode(LED_SECTION_AMBIENTBUILDINGS, OUTPUT);
+  digitalWrite(LED_SECTION_AMBIENTBUILDINGS, LOW);
   pinMode(BUTTON_SYSTEM_PIN, INPUT);
+  initPWM();                // ← nowe
 }
 
 void loop() {
-  // --- OBSŁUGA SYSTEMU ---
   if (isSystemClicked()) {
     systemActive = !systemActive;
     digitalWrite(BUILTIN_LED, systemActive ? HIGH : LOW);
-    resetSekcji(); // zawsze resetuj przy każdej zmianie stanu
-}
+    resetSekcji();
+  }
 
-  // --- URUCHOMIENIE PROGRAMU PO SPRAWDZENIU WARUNKU ---
   if (systemActive) {
-    Serial.print("LDR: ");
-    Serial.print(realLDR());
-    Serial.print(" | isDark: ");
-    Serial.print(currentDarkState);
-    Serial.print(" | section1Active: ");
-    Serial.println(section1Active);
-    Serial.print(" | firstRun: ");
-Serial.print(firstRunDark);
-Serial.print(" | timeDiff: ");
-Serial.println(millis() - lastSectionTime);
     initializeLEDs();
+    updatePWM();            // ← nowe
   }
 }

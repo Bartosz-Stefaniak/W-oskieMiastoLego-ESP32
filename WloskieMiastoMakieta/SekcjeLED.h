@@ -2,44 +2,98 @@
 #define SEKCJELED_H
 #include "Konfiguracja.h"
 #include "Fotorezystor.h"
+#include "SekcjaPWM.h"
+// --- INTERWAŁY ---
+const unsigned long TURN_ON_INTERVAL  = 3000;  // 1 minuta między włączaniem
+const unsigned long TURN_OFF_INTERVAL = 3000;  // 30 sekund między wyłączaniem
 
-const unsigned long SECTION_INTERVAL = 30000; // 5 minut
+// --- STAN ---
 unsigned long lastSectionTime = 0;
-bool section1Active = false;
-bool firstRunDark = true;
+int activeSections = 0; // ile sekcji aktualnie włączonych (0-6)
+bool firstRunDark  = true;
 bool firstRunLight = true;
 
+// --- KOLEJNOŚĆ WŁĄCZANIA I WYŁĄCZANIA ---
+// Włączanie: 1, STREETLIGHTS, AMBIENT, 2, TARASY(PWM), 3
+// Wyłączanie: 3, 2, TARASY(PWM), 1, AMBIENT, STREETLIGHTS
+
+const int SECTION_COUNT = 6;
+
+int onOrder[SECTION_COUNT] = {
+  LED_SECTION_1,
+  LED_SECTION_STREETLIGHTS,
+  LED_SECTION_AMBIENTBUILDINGS,
+  LED_SECTION_2,
+  LED_SECTION_TERRACESPWM,
+  LED_SECTION_3
+};
+
+int offOrder[SECTION_COUNT] = {
+  LED_SECTION_3,
+  LED_SECTION_2,
+  LED_SECTION_TERRACESPWM,
+  LED_SECTION_1,
+  LED_SECTION_AMBIENTBUILDINGS,
+  LED_SECTION_STREETLIGHTS
+};
+
 void resetSekcji() {
-  section1Active = false;
-  firstRunDark = true;
-  firstRunLight = true;
+  for (int i = 0; i < SECTION_COUNT; i++) {
+    if (onOrder[i] != LED_SECTION_TERRACESPWM) {
+      digitalWrite(onOrder[i], LOW);
+    }
+    // PWM — logika w SekcjaPWM.h, tutaj tylko sygnał do wyłączenia
+  }
+  activeSections = 0;
+  firstRunDark   = true;
+  firstRunLight  = true;
   lastSectionTime = 0;
-  digitalWrite(LED_SECTION_STREETLIGHTS, LOW);
 }
 
 void initializeLEDs() {
   bool dark = isDark();
   unsigned long now = millis();
 
-  if (dark && !section1Active) {
-    if (firstRunDark || (now - lastSectionTime) > SECTION_INTERVAL) {
+  // --- WŁĄCZANIE sekwencyjne ---
+  if (dark && activeSections < SECTION_COUNT) {
+    if (firstRunDark || (now - lastSectionTime) > TURN_ON_INTERVAL) {
       firstRunDark = false;
-      firstRunLight = true; // reset gaszenia
-      section1Active = true;
-      digitalWrite(LED_SECTION_STREETLIGHTS, HIGH);
+      firstRunLight = true;
       lastSectionTime = now;
-      Serial.println("Sekcja 1 WLACZONA");
+
+      int pin = onOrder[activeSections];
+      if (pin != LED_SECTION_TERRACESPWM) {
+        digitalWrite(pin, HIGH);
+      } else
+      {
+        enablePWM();
+      }
+      // LED_SECTION_TERRACESPWM — SekcjaPWM.h samo to obsłuży gdy activeSections == 4
+
+      Serial.print("Wlaczono sekcje: ");
+      Serial.println(activeSections + 1);
+      activeSections++;
     }
   }
 
-  if (!dark && section1Active) {
-    if (firstRunLight || (now - lastSectionTime) > SECTION_INTERVAL) {
+  // --- WYŁĄCZANIE sekwencyjne ---
+  if (!dark && activeSections > 0) {
+    if (firstRunLight || (now - lastSectionTime) > TURN_OFF_INTERVAL) {
       firstRunLight = false;
-      firstRunDark = true; // reset zapalania
-      section1Active = false;
-      digitalWrite(LED_SECTION_STREETLIGHTS, LOW);
+      firstRunDark = true;
       lastSectionTime = now;
-      Serial.println("Sekcja 1 WYLACZONA");
+
+      activeSections--;
+      int pin = offOrder[SECTION_COUNT - 1 - activeSections];
+      if (pin != LED_SECTION_TERRACESPWM) {
+        digitalWrite(pin, LOW);
+      }else{
+        disablePWM;
+      }
+      // LED_SECTION_TERRACESPWM — SekcjaPWM.h samo to obsłuży
+
+      Serial.print("Wylaczono sekcje: ");
+      Serial.println(activeSections + 1);
     }
   }
 }
