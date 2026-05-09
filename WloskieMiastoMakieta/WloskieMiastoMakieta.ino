@@ -5,7 +5,7 @@
 #include "SekcjeLED.h"
 
 bool systemActive = false;
-
+bool tramRunning = false;
 void setup() {
   Serial.begin(115200);
   pinMode(BUILTIN_LED, OUTPUT);
@@ -21,6 +21,10 @@ void setup() {
   pinMode(LED_SECTION_AMBIENTBUILDINGS, OUTPUT);
   digitalWrite(LED_SECTION_AMBIENTBUILDINGS, LOW);
   pinMode(BUTTON_SYSTEM_PIN, INPUT);
+  pinMode(BUTTON_TRAM_PIN, INPUT);
+  pinMode(MOTOR_IN3, OUTPUT);
+  pinMode(MOTOR_IN4, OUTPUT);
+  pinMode(MOTOR_ENB, OUTPUT);
   initPWM();                // ← nowe
 }
 
@@ -29,10 +33,19 @@ void loop() {
     systemActive = !systemActive;
     digitalWrite(BUILTIN_LED, systemActive ? HIGH : LOW);
     resetSekcji();
+    if (!systemActive) tramRunning = false;
   }
 
   if (systemActive) {
     initializeLEDs();
     updatePWM();            // ← nowe
+  if (isTramClicked()) {
+      tramRunning = !tramRunning;
+  }
+      updateTramwaj(tramRunning);
+  } else {
+    // Całkowite zatrzymanie gdy system wyłączony
+    stopPhysicalMotor();
+    tramRunning = false;
   }
 }
