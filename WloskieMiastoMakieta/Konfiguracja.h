@@ -19,8 +19,8 @@ const int DF_TX = 17;
 const int DF_RX = 16;
 
 // --- PINY DLA SILNIKA (L298N) ---
-const int MOTOR_IN3 = 25;
-const int MOTOR_IN4 = 26;
+const int MOTOR_IN3 = 25; //(IN3=1, IN4=0) - kręci w stronę drzwi
+const int MOTOR_IN4 = 26; //(IN4=1, IN3=0) - kręci w stronę okna
 const int MOTOR_ENB = 27;
 
 // --- SENSORY I INTERFEJS ---

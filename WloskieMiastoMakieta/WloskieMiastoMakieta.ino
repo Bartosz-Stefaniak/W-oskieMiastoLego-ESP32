@@ -25,9 +25,7 @@ void setup() {
   digitalWrite(LED_SECTION_AMBIENTBUILDINGS, LOW);
   pinMode(BUTTON_SYSTEM_PIN, INPUT);
   pinMode(BUTTON_TRAM_PIN, INPUT);
-  pinMode(MOTOR_IN3, OUTPUT);
-  pinMode(MOTOR_IN4, OUTPUT);
-  pinMode(MOTOR_ENB, OUTPUT);
+  initTramwaj();
   initPWM();                // ← nowe
 }
 

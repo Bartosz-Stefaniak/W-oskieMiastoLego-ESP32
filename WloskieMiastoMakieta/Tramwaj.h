@@ -51,7 +51,7 @@ void updateTramwaj(bool active) {
 
     case ACCEL: // 2 sekundy przyspieszania
       if (now - tramTimer <= 1000) {
-        currentSpeed = map(now - tramTimer, 0, 1000, 0, 255);
+        currentSpeed = map(now - tramTimer, 0, 500, 0, 255);
         ledcWrite(MOTOR_ENB, currentSpeed);
       } else {
         Serial.println("TRAMWAJ: PREDKOSC STALA");
