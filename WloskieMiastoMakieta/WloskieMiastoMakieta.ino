@@ -3,9 +3,12 @@
 #include "Fotorezystor.h"
 #include "SekcjaPWM.h"      // ← nowe
 #include "SekcjeLED.h"
+#include "PrzyciskTramwaj.h"
+#include "Tramwaj.h"
 
 bool systemActive = false;
 bool tramRunning = false;
+bool lastTramRunning = false;
 void setup() {
   Serial.begin(115200);
   pinMode(BUILTIN_LED, OUTPUT);
@@ -47,5 +50,10 @@ void loop() {
     // Całkowite zatrzymanie gdy system wyłączony
     stopPhysicalMotor();
     tramRunning = false;
+  }
+  if (tramRunning != lastTramRunning) {
+    Serial.print("Tram running state changed to: "); 
+    Serial.println(tramRunning ? "START / WORKING" : "WAITING FOR STOP");
+    lastTramRunning = tramRunning; // Zapamiętaj obecny stan
   }
 }
