@@ -13,8 +13,8 @@ bool isStop = false;
 void initTramwaj() {
   pinMode(MOTOR_IN3, OUTPUT);
   pinMode(MOTOR_IN4, OUTPUT);
-  // Inicjalizacja PWM dla ESP32 (kanał 1, 5000Hz, 8 bitów rozdzielczości)
-  ledcAttach(MOTOR_ENB, 1000, 8); 
+  // Inicjalizacja PWM dla ESP32 (kanał 1, 500Hz, 8 bitów rozdzielczości)
+  ledcAttach(MOTOR_ENB, 500, 8); 
   digitalWrite(MOTOR_IN3, LOW);
   digitalWrite(MOTOR_IN4, LOW);
   ledcWrite(MOTOR_ENB, 0);
@@ -42,16 +42,16 @@ void updateTramwaj(bool active) {
         tramTimer = now;
         // Ustawienie kierunku
         if (directionForward) {
-          digitalWrite(MOTOR_IN3, HIGH); digitalWrite(MOTOR_IN4, LOW);
-        } else {
           digitalWrite(MOTOR_IN3, LOW); digitalWrite(MOTOR_IN4, HIGH);
+        } else {
+          digitalWrite(MOTOR_IN3, HIGH); digitalWrite(MOTOR_IN4, LOW);
         }
       }
       break;
 
-    case ACCEL: // 2 sekundy przyspieszania
-      if (now - tramTimer <= 1000) {
-        currentSpeed = map(now - tramTimer, 0, 500, 0, 255);
+    case ACCEL: // 3 sekundy przyspieszania
+      if (now - tramTimer <= 2000) {
+        currentSpeed = map(now - tramTimer, 0, 2000, 0, 255);
         ledcWrite(MOTOR_ENB, currentSpeed);
       } else {
         Serial.println("TRAMWAJ: PREDKOSC STALA");
@@ -61,7 +61,7 @@ void updateTramwaj(bool active) {
       break;
 
     case CONSTANT: // 1 sekunda jazdy
-      if (now - tramTimer <= 1000) {
+      if (now - tramTimer <= 2000) {
         ledcWrite(MOTOR_ENB, 255);
       } else {
         Serial.println("TRAMWAJ: HAMOWANIE");
@@ -71,8 +71,8 @@ void updateTramwaj(bool active) {
       break;
 
     case DECEL: // 2 sekundy hamowania
-      if (now - tramTimer <= 1000) {
-        currentSpeed = map(now - tramTimer, 0, 1000, 255, 0);
+      if (now - tramTimer <= 3000) {
+        currentSpeed = map(now - tramTimer, 0, 3000, 255, 0);
         ledcWrite(MOTOR_ENB, currentSpeed);
       } else {
         stopPhysicalMotor();
