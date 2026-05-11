@@ -34,21 +34,20 @@ void loop() {
     systemActive = !systemActive;
     digitalWrite(BUILTIN_LED, systemActive ? HIGH : LOW);
     resetSekcji();
-    if (!systemActive) tramRunning = false;
   }
 
   if (systemActive) {
     initializeLEDs();
-    updatePWM();            // ← nowe
+    updatePWM();           // ← nowe
   if (isTramClicked()) {
       tramRunning = !tramRunning;
   }
-      updateTramwaj(tramRunning);
-  } else {
-    // Całkowite zatrzymanie gdy system wyłączony
-    stopPhysicalMotor();
-    tramRunning = false;
+  }else 
+  {
+    tramRunning=false;
   }
+  updateTramwaj(tramRunning && systemActive);
+
   if (tramRunning != lastTramRunning) {
     Serial.print("Tram running state changed to: "); 
     Serial.println(tramRunning ? "START / WORKING" : "WAITING FOR STOP");

@@ -28,15 +28,18 @@ void stopPhysicalMotor() {
 
 void updateTramwaj(bool active) {
   unsigned long now = millis();
+  if(!active) {
+    isStop=true;
+  } else {
+    isStop = false;
+  }
 
   // Jeśli system zostanie wyłączony w trakcie jazdy
-  if (!active && currentTramState != STOPPED) {
-    isStop=true;
-  }
+
 
   switch (currentTramState) {
     case STOPPED:
-      if (active && !isStop) {
+      if ((active && !isStop)|| (isStop && coursesDone%2 != 0)) {
         Serial.println("TRAMWAJ: START");
         currentTramState = ACCEL;
         tramTimer = now;
@@ -50,8 +53,8 @@ void updateTramwaj(bool active) {
       break;
 
     case ACCEL: // 3 sekundy przyspieszania
-      if (now - tramTimer <= 2000) {
-        currentSpeed = map(now - tramTimer, 0, 2000, 0, 255);
+      if (now - tramTimer <= 3000) {
+        currentSpeed = map(now - tramTimer, 0, 3000, 0, 255);
         ledcWrite(MOTOR_ENB, currentSpeed);
       } else {
         Serial.println("TRAMWAJ: PREDKOSC STALA");
@@ -60,8 +63,8 @@ void updateTramwaj(bool active) {
       }
       break;
 
-    case CONSTANT: // 1 sekunda jazdy
-      if (now - tramTimer <= 2000) {
+    case CONSTANT: // 4 sekundy jazdy
+      if (now - tramTimer <= 3500) {
         ledcWrite(MOTOR_ENB, 255);
       } else {
         Serial.println("TRAMWAJ: HAMOWANIE");
@@ -70,9 +73,9 @@ void updateTramwaj(bool active) {
       }
       break;
 
-    case DECEL: // 2 sekundy hamowania
-      if (now - tramTimer <= 3000) {
-        currentSpeed = map(now - tramTimer, 0, 3000, 255, 0);
+    case DECEL: // 4 sekundy hamowania
+      if (now - tramTimer <= 4000) {
+        currentSpeed = map(now - tramTimer, 0, 4000, 255, 0);
         ledcWrite(MOTOR_ENB, currentSpeed);
       } else {
         stopPhysicalMotor();
@@ -89,14 +92,13 @@ void updateTramwaj(bool active) {
       if (now - tramTimer > 6000) {
         if (isStop && (coursesDone % 2 == 0)) {
           currentTramState = STOPPED;
-          isStop = false; // Reset flagi po całkowitym zatrzymaniu
           coursesDone = 0;     // Reset licznika
         } 
-        else if (!active && (coursesDone % 2 == 0)) {
+        else if (isStop && (coursesDone % 2 != 0)) {
            // Dodatkowe zabezpieczenie gdyby flaga active spadła nagle
            currentTramState = STOPPED;
         }
-        else {
+        else if(!isStop) {
           // Kontynuuj jazdę (albo powrót do bazy, albo kolejny cykl)
           currentTramState = STOPPED; // Wróć do STOPPED, a tam case STOPPED od razu go odpali ponownie
         }
