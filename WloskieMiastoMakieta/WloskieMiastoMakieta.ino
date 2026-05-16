@@ -34,6 +34,8 @@ void loop() {
     systemActive = !systemActive;
     digitalWrite(BUILTIN_LED, systemActive ? HIGH : LOW);
     resetSekcji();
+    if (!systemActive&&tramRunning)
+    tramRunning=false;
   }
 
   if (systemActive) {

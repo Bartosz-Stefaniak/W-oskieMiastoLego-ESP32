@@ -54,7 +54,7 @@ void updateTramwaj(bool active) {
 
     case ACCEL: // 3 sekundy przyspieszania
       if (now - tramTimer <= 3000) {
-        currentSpeed = map(now - tramTimer, 0, 3000, 0, 255);
+        currentSpeed = map(now - tramTimer, 0, 3000, 0, 180);
         ledcWrite(MOTOR_ENB, currentSpeed);
       } else {
         Serial.println("TRAMWAJ: PREDKOSC STALA");
@@ -64,8 +64,8 @@ void updateTramwaj(bool active) {
       break;
 
     case CONSTANT: // 4 sekundy jazdy
-      if (now - tramTimer <= 3500) {
-        ledcWrite(MOTOR_ENB, 255);
+      if (now - tramTimer <= 3000) {
+        ledcWrite(MOTOR_ENB, 180);
       } else {
         Serial.println("TRAMWAJ: HAMOWANIE");
         currentTramState = DECEL;
@@ -75,7 +75,7 @@ void updateTramwaj(bool active) {
 
     case DECEL: // 4 sekundy hamowania
       if (now - tramTimer <= 4000) {
-        currentSpeed = map(now - tramTimer, 0, 4000, 255, 0);
+        currentSpeed = map(now - tramTimer, 0, 4000, 180, 0);
         ledcWrite(MOTOR_ENB, currentSpeed);
       } else {
         stopPhysicalMotor();
