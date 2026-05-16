@@ -72,10 +72,10 @@ void updateTramwaj(bool active) {
     case CONSTANT: // 4 sekundy jazdy
     if(directionForward)
     {
-      driveTime=8750;
+      driveTime=9360;
     }
     else{
-      driveTime=8965;
+      driveTime=9090;
     }
       if (now - tramTimer <= driveTime) {
       if(directionForward){
@@ -92,8 +92,8 @@ void updateTramwaj(bool active) {
       break;
 
     case DECEL: // 4 sekundy hamowania
-      if (now - tramTimer <= 9000) {
-        currentSpeed = map(now - tramTimer, 0, 4000, 70, 30);
+      if (now - tramTimer <= 11000) {
+        currentSpeed = map(now - tramTimer, 0, 4000, 65, 20);
         ledcWrite(MOTOR_ENB, currentSpeed);
       } else {
         stopPhysicalMotor();
